@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import re
 
 file_path = sys.argv[2]
 if sys.argv[1] == '-c':
@@ -13,4 +14,11 @@ if sys.argv[1] == '-l':
     # parse text file and return no. of lines
     with open(file_path, 'r') as file:
         content = file.readlines()
+    print(len(content), file_path)
+
+if sys.argv[1] == '-w':
+    # parse text file and return no. of words
+    with open(file_path, 'r') as file:
+        content = file.read()
+        content = re.findall(r'\S+', content)
     print(len(content), file_path)
