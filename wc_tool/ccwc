@@ -6,4 +6,11 @@ if sys.argv[1] == '-c':
     # parse text file and return no. of bytes
     with open(file_path, 'rb') as file:
         content = file.read()
-print(len(content), file_path)
+
+    print(len(content), file_path)
+
+if sys.argv[1] == '-l':
+    # parse text file and return no. of lines
+    with open(file_path, 'r') as file:
+        content = file.readlines()
+    print(len(content), file_path)
