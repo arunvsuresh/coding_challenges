@@ -2,23 +2,55 @@
 import sys
 import re
 
-file_path = sys.argv[2]
-if sys.argv[1] == '-c':
-    # parse text file and return no. of bytes
+if len(sys.argv) < 3:
+    file_path = sys.argv[1]
+else:
+    file_path = sys.argv[2]
+
+def read_file_in_bytes(file_path):
     with open(file_path, 'rb') as file:
         content = file.read()
+    return content
 
+def read_file_as_string(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+    return content
+
+def read_file_line_by_line(file_path):
+    with open(file_path, 'r') as file:
+        content = file.readlines()
+    return content
+
+
+
+
+if sys.argv[1] == '-c':
+    # parse text file and return no. of bytes
+    content = read_file_in_bytes(file_path)
     print(len(content), file_path)
 
 if sys.argv[1] == '-l':
     # parse text file and return no. of lines
-    with open(file_path, 'r') as file:
-        content = file.readlines()
+    content = read_file_as_string(file_path)
     print(len(content), file_path)
 
 if sys.argv[1] == '-w':
     # parse text file and return no. of words
-    with open(file_path, 'r') as file:
-        content = file.read()
-        content = re.findall(r'\S+', content)
+    content = read_file_as_string(file_path)
+    content = re.findall(r'\S+', content)
     print(len(content), file_path)
+
+if sys.argv[1] == '-m':
+    # parse text file and return no. of chars
+    content = read_file_as_string(file_path)
+    content = re.match(r'(?s).*', content)
+    print(len(content.group(0)), file_path)
+
+if len(sys.argv) < 3:
+    lines = read_file_line_by_line(file_path)
+    words = read_file_as_string(file_path)
+    words = re.findall(r'\S+', words)
+    bytes = read_file_in_bytes(file_path)
+
+    print(len(lines), len(words), len(bytes), file_path)
