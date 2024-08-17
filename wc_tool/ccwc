@@ -2,11 +2,6 @@
 import sys
 import re
 
-if len(sys.argv) < 3:
-    file_path = sys.argv[1]
-else:
-    file_path = sys.argv[2]
-
 def read_file_in_bytes(file_path):
     with open(file_path, 'rb') as file:
         content = file.read()
@@ -22,35 +17,55 @@ def read_file_line_by_line(file_path):
         content = file.readlines()
     return content
 
+def determine_file_path(args):
+    if len(args) < 2:
+        raise ValueError("Insufficient arguments. Usage: ccwc [-option] [file]")
+    valid_options = {'-c', '-l', '-w', '-m'}
+    options = []
+    files = []
+    for arg in args[1:]:
+        if arg.startswith('-') and arg in valid_options:
+            options.append(arg)
+        else:
+            files.append(arg)
+    return options, files
 
+def parse_arg(options, files):
+    file_path = files[0]
+    if len(options) == 1:
+        arg = options[0]
+        if arg == '-c':
+            # parse text file and return no. of bytes
+            bytes = read_file_in_bytes(file_path)
+            print(len(bytes), file_path)
 
+        elif arg == '-l':
+            # parse text file and return no. of lines
+            lines = read_file_as_string(file_path)
+            print(len(lines), file_path)
 
-if sys.argv[1] == '-c':
-    # parse text file and return no. of bytes
-    content = read_file_in_bytes(file_path)
-    print(len(content), file_path)
+        elif arg == '-w':
+            # parse text file and return no. of words
+            words = read_file_as_string(file_path)
+            words = re.findall(r'\S+', words)
+            print(len(words), file_path)
 
-if sys.argv[1] == '-l':
-    # parse text file and return no. of lines
-    content = read_file_as_string(file_path)
-    print(len(content), file_path)
+        elif arg == '-m':
+            # parse text file and return no. of chars
+            with open(file_path, 'rb') as file:
+                chars = sum(1 for _ in file.read().decode())
+            print(chars, file_path)
+    else:
+        return(parse_all_args(file_path))
 
-if sys.argv[1] == '-w':
-    # parse text file and return no. of words
-    content = read_file_as_string(file_path)
-    content = re.findall(r'\S+', content)
-    print(len(content), file_path)
-
-if sys.argv[1] == '-m':
-    # parse text file and return no. of chars
-    content = read_file_as_string(file_path)
-    content = re.match(r'(?s).*', content)
-    print(len(content.group(0)), file_path)
-
-if len(sys.argv) < 3:
+def parse_all_args(file_path):
     lines = read_file_line_by_line(file_path)
     words = read_file_as_string(file_path)
     words = re.findall(r'\S+', words)
     bytes = read_file_in_bytes(file_path)
 
     print(len(lines), len(words), len(bytes), file_path)
+
+if __name__ == '__main__':
+    arg, file_path = determine_file_path(sys.argv)
+    parse_arg(arg, file_path)
